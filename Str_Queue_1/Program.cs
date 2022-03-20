@@ -16,13 +16,13 @@ namespace Str_Queue_1
             }
             Console.WriteLine("С номера какого элемента начать ввод?");
             int firstIndexOfQueue;
-            while (!(int.TryParse(Console.ReadLine(), out firstIndexOfQueue)) && !(firstIndexOfQueue <= userMasN))
+            while (!(int.TryParse(Console.ReadLine(), out firstIndexOfQueue)) || !(firstIndexOfQueue <= userMasN))
             {
                 Console.WriteLine("Неверный Ввод индекса первого элемента! Попробуйте снова:");
             }
             Console.WriteLine("Сколько элементов ввести?");
             int amountOfQueueElements;
-            while (!(int.TryParse(Console.ReadLine(), out amountOfQueueElements)) && !(amountOfQueueElements <= userMasN - firstIndexOfQueue))
+            while (!(int.TryParse(Console.ReadLine(), out amountOfQueueElements)) || !(amountOfQueueElements <= userMasN - firstIndexOfQueue))
             {
                 Console.WriteLine("Неверный Ввод количества элементов очереди! Попробуйте снова:");
             }
@@ -40,28 +40,38 @@ namespace Str_Queue_1
             while(true)
             {
                 bool isProgrammEnd = false;
-                /*Console.WriteLine("Добавить элемент, очистить очередь, вывести содержимое, добавить в конец очереди или удалить первый элемент?");*/
-                Console.WriteLine("1.Добавить элемент\n2.Очистить очередь\n3.Вывести содержимое\n4.Добавить в конец очереди\n5.Удалить первый элемент\n6-9 Завершить работу?");
+                Console.WriteLine("1.Очистить очередь\n2.Проверить, пуста ли очередь\n3.Распечатать очередь\n4.Добавить в конец очереди элемент\n5.Удалить первый элемент из очереди\n6-9 Завершить работу?");
                 int userInput = -1;
                 userInput = Int16.Parse(Console.ReadLine());
                 switch(userInput)
                 {
                     case 1:
-                        Console.WriteLine("Введите элемент, который надо добавить:");
-                        string newElem = Console.ReadLine();
-
+                        ClearQueue(mass);
                         break;
                     case 2:
-                        Console.WriteLine("dasas");
+                        if(CheckIfQueueIsEmpty(mass))
+                        {
+                            Console.WriteLine("Очередь пуста!");
+                            break;
+                        }
+                        Console.WriteLine("Очередь не пуста!");
                         break;
                     case 3:
-                        Console.WriteLine("dasas");
+                        PrintQueue(mass);
                         break;
                     case 4:
-                        Console.WriteLine("dasas");
+                        Console.WriteLine("Какой элемент добавить в очередь?");
+                        AddToQueue(mass, Console.ReadLine());
                         break;
                     case 5:
-                        Console.WriteLine("dasas");
+                        string str;
+                        RemoveFromQueue(mass, out str);
+                        if (str != null)
+                        {
+                            Console.WriteLine($"Был удален элемент:{str}");
+                            break;
+                        }
+                        Console.WriteLine("ИСЧЕРПАНИЕ ОЧЕРЕДИ!");
                         break;
                     default:
                         isProgrammEnd = true;
@@ -73,11 +83,93 @@ namespace Str_Queue_1
                     break;
                 }
             }
-            void CheckIfLastIndexNotEmpty(string[] mass)
-            {
-                if (mass[mass.Length] == "asd")
-                {
 
+            void ClearQueue(string[] mass)
+            {
+                for (int i = 0; i < mass.Length; i++)
+                {
+                    mass[i] = null;
+                }
+            }
+
+            bool CheckIfQueueIsEmpty(string[] mass)
+            {
+                for (int i = 0; i < mass.Length; i++)
+                {
+                    if(mass[i] != null)
+                    return false;
+                }
+                    return true;
+            }
+
+            void PrintQueue(string[] mass)
+            {
+                for(int i = 0; i < mass.Length;i++)
+                {
+                    if (mass[i] != null)
+                    {
+                        Console.WriteLine($"Элемент №{i} очереди:{mass[i]}");
+                    }
+                }
+            }
+
+            void AddToQueue(string[] mass, string str)
+            {
+                try
+                {
+                    if (!CheckIfQueueIsEmpty(mass))
+                    {
+                        for (int i = mass.Length - 1; i > 0; i--)
+                        {
+                            if (mass[i] != null)
+                            {
+                                mass[i + 1] = str;
+                                break;
+                            }
+                        }
+                    }
+                    if (CheckIfQueueIsEmpty(mass))
+                    {
+                        Console.WriteLine("Очередь пуста! На какое место добавить элемент?");
+                        int firstIndexOfQueue;
+                        while (!(int.TryParse(Console.ReadLine(), out firstIndexOfQueue)) && !(firstIndexOfQueue <= userMasN))
+                        {
+                            Console.WriteLine("Неверный Ввод индекса элемента! Попробуйте снова:");
+                        }
+                        mass[firstIndexOfQueue] = str;
+                    }                  
+                }
+                catch
+                {
+                    try
+                    {
+                        for(int i = 0; i < mass.Length; i++)
+                        {
+                            if (mass[i] != null)
+                            {
+                                mass[i - 1] = mass[i];
+                                mass[i] = null;
+                            }
+                        }
+                        Console.WriteLine("Очередь достигла правого края!\nВсе элементы сдвинуты влево!\nПопробуйте добавить элемент снова!");
+                    }
+                    catch
+                    {
+                        Console.WriteLine("ОШИБКА ПЕРЕПОЛНЕНИЯ!");
+                    } 
+                }
+            }
+
+            void RemoveFromQueue(string[] mass, out string str)
+            {
+                str = null;
+                for (int i = mass.Length - 1; i > 0; i--)
+                {
+                    if(mass[i] != null)
+                    {
+                        str = mass[i];
+                        mass[i] = null;
+                    }
                 }
             }
         }
